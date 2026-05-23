@@ -43,7 +43,10 @@ flowchart LR
 
 ## 🛠️ Configuration
 
-You can customize the thresholds by editing the top section of `idle-shutdown.sh`:
+You can customize the thresholds and schedules in two distinct locations:
+
+### 1. Script Parameters (Idle Thresholds)
+Located at the top of [idle-shutdown.sh](file:///home/aefiguerola/projects/idle-shutdown/idle-shutdown.sh):
 
 ```bash
 # Thresholds
@@ -52,10 +55,63 @@ IDLE_LIMIT=600      # Total idle duration in seconds before triggering shutdown 
 IDLE_FILE="/tmp/vm_idle_time"  # State file to track accumulated idle time
 ```
 
-> [!NOTE]  
-> The systemd timer is configured to run at custom intervals. You can adjust the execution frequency by modifying `idle-shutdown.timer`:
-> - `OnBootSec`: Time to wait after system boot before the first check.
-> - `OnUnitActiveSec`: The interval between subsequent checks (e.g., run every 5 minutes).
+### 2. Systemd Timer Parameters (Execution Schedules)
+Located in [units/idle-shutdown.timer](file:///home/aefiguerola/projects/idle-shutdown/units/idle-shutdown.timer):
+
+```ini
+[Timer]
+OnBootSec=10min       # Time to wait after system boot before the first check
+OnUnitActiveSec=1min  # How often the check runs after that (once per minute)
+```
+
+---
+
+## 🧮 How the Timing Math Works (& Gotchas)
+
+Understanding the relationship between the **Systemd Timer** and the **Bash Script Counter** is crucial to avoid unexpected behavior or extremely delayed shutdowns.
+
+### The Active Setup (Checks run every 1 minute)
+Here is the step-by-step timeline of how the currently configured parameters interact:
+
+| Time Elapsed | Event | What Happens | Counter Value | VM State |
+|---|---|---|---|---|
+| **0 - 10 min** | System bootup | System stabilizes; **no checks run**. | `0s` | Online |
+| **10 min** | Boot countdown ends | First check runs. If idle, adds `60s`. | `60s` | Online |
+| **11 min** | 1 min active timer | Second check runs. If still idle, adds `60s`. | `120s` | Online |
+| **...** | ... | ... | ... | ... |
+| **20 min** | 10th consecutive check | Tenth check runs. If idle, adds `60s`. Hits `600s` limit! | `600s` | **Shutdown!** |
+
+> [!TIP]  
+> If CPU load spikes or you log in during **any** of the checks from minutes 10 to 19, the script instantly resets the counter to `0`. The 10-minute continuous idle countdown starts all over.
+
+---
+
+### ⚠️ The "4.6-Hour Mismatch" Gotcha
+A common mistake when configuring this system is mismatched timer execution frequency (e.g. running the check once every 30 minutes) versus the script's internal tick rate (which assumes `+60` seconds of idle credit per run).
+
+**The Mismatch Example:**
+* **`OnUnitActiveSec = 30min`** (Timer check runs every 30 minutes)
+* **`IDLE_LIMIT = 600`** (Script expects 10 minutes / 600s of idle time)
+* **`NEW_IDLE = CURRENT_IDLE + 60`** (Script adds 60s per check)
+
+**Why it's a gotcha:**
+Because the check only runs once every 30 minutes, it takes **10 successful checks** to reach the 600-second limit. 
+* **Mathematically**: `10 checks * 30 minutes = 300 minutes (5 hours)` of continuous, absolute idleness to finally trigger a shutdown!
+* **The Risk**: If a minor CPU spike happens at minute 270 (after 4.5 hours of idleness), the counter drops to `0`, and you must wait another 5 hours.
+
+---
+
+### ✍️ Customizing for Common Use Cases
+
+#### Case 1: You want a 30-minute idle shutdown (with frequent checking)
+If you want the VM to shut down after exactly 30 minutes of continuous idleness:
+1. **In `units/idle-shutdown.timer`**: Keep `OnUnitActiveSec=1min` (checks run once a minute).
+2. **In `idle-shutdown.sh`**: Change `IDLE_LIMIT=1800` (1800 seconds = 30 minutes).
+
+#### Case 2: You want a 1-hour idle shutdown (with frequent checking)
+If you want the VM to shut down after exactly 60 minutes of continuous idleness:
+1. **In `units/idle-shutdown.timer`**: Keep `OnUnitActiveSec=1min`.
+2. **In `idle-shutdown.sh`**: Change `IDLE_LIMIT=3600` (3600 seconds = 60 minutes).
 
 ---
 
