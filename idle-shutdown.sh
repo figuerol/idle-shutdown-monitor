@@ -3,7 +3,7 @@
 # Thresholds
 CPU_THRESHOLD=0.10
 IDLE_LIMIT=600 # 1 minutes in seconds
-IDLE_FILE="/tmp/vm_idle_time"
+IDLE_FILE="/run/vm_idle_time"
 
 # Get current 1-minute CPU load
 CPU_LOAD=$(awk '{print $2}' /proc/loadavg)

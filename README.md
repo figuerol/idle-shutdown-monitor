@@ -24,7 +24,7 @@ flowchart LR
 
 1. **CPU Monitoring**: Checks the 5-minute CPU load average from `/proc/loadavg`.
 2. **Session Monitoring**: Verifies active interactive shell sessions (`ssh`, `bash`, `sh`, `pts` allocations, or `gcloud` console connections).
-3. **Threshold Check**: If both CPU usage is below the configured threshold AND no user sessions are active, it increments a persistent idle counter stored in `/tmp/vm_idle_time`.
+3. **Threshold Check**: If both CPU usage is below the configured threshold AND no user sessions are active, it increments a persistent idle counter stored in `/run/vm_idle_time`.
 4. **Action**: If the counter reaches the `IDLE_LIMIT`, the system triggers `systemctl poweroff`. If any activity is detected before the limit is reached, the idle counter resets to `0`.
 
 ---
@@ -52,7 +52,7 @@ Located at the top of [idle-shutdown.sh](file:///home/aefiguerola/projects/idle-
 # Thresholds
 CPU_THRESHOLD=0.10  # Maximum CPU average load (5-min) considered idle
 IDLE_LIMIT=600      # Total idle duration in seconds before triggering shutdown (600s = 10 mins)
-IDLE_FILE="/tmp/vm_idle_time"  # State file to track accumulated idle time
+IDLE_FILE="/run/vm_idle_time"  # State file to track accumulated idle time
 ```
 
 ### 2. Systemd Timer Parameters (Execution Schedules)
