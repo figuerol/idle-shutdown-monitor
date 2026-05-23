@@ -204,3 +204,9 @@ This script will:
 
 > [!WARNING]  
 > If you are active in a SSH session on your VM, the script will detect your session under `ACTIVE_SESSIONS` and will **not** shutdown. However, as soon as you disconnect or if your terminal session times out, the active session count drops to `0`. If CPU load is also under `0.10`, the counter will begin ticking towards the shutdown limit. Ensure your session timeout settings and idle shutdown timer durations are aligned to prevent unexpected shutdowns while you are still working.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](file:///home/aefiguerola/projects/idle-shutdown/LICENSE) file for details.
