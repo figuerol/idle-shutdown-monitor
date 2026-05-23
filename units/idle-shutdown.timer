@@ -3,7 +3,7 @@ Description=Run Idle Shutdown Check Regularly
 
 [Timer]
 OnBootSec=10min
-OnUnitActiveSec=30min
+OnUnitActiveSec=1min
 
 [Install]
 WantedBy=timers.target
