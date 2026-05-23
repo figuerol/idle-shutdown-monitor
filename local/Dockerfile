@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 2. Copy your automation files to their correct system pathways
 COPY idle-shutdown.sh /usr/local/bin/idle-shutdown.sh
-COPY idle-shutdown.service /etc/systemd/system/idle-shutdown.service
-COPY idle-shutdown.timer /etc/systemd/system/idle-shutdown.timer
+COPY units/idle-shutdown.service /etc/systemd/system/idle-shutdown.service
+COPY units/idle-shutdown.timer /etc/systemd/system/idle-shutdown.timer
 
 # 3. Correct execution permissions and enable the systemd timer module
 RUN chmod +x /usr/local/bin/idle-shutdown.sh && \

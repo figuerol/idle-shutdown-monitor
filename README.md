@@ -34,10 +34,12 @@ flowchart TD
 ## 📁 File Structure
 
 * **`idle-shutdown.sh`**: The core shell script that performs system checks, tracks idle duration, and executes the shutdown command.
-* **`idle-shutdown.service`**: The systemd oneshot service configuration that runs the monitor script.
-* **`idle-shutdown.timer`**: The systemd timer that periodically triggers the idle-shutdown service.
-* **`Dockerfile`**: A Debian Bookworm environment configured with systemd to simulate, test, and debug the setup locally inside a container.
-* **`run-test.sh`**: A shell utility to automatically build, run, and provide commands for inspecting the test container.
+* **`units/`**: Contains the systemd configuration units.
+  * **`idle-shutdown.service`**: The systemd oneshot service configuration.
+  * **`idle-shutdown.timer`**: The systemd timer that periodically triggers the idle-shutdown service.
+* **`local/`**: Contains the local environment simulation/sandbox harness.
+  * **`Dockerfile`**: A Debian Bookworm environment configured with systemd to simulate, test, and debug the setup locally inside a container.
+  * **`run-test.sh`**: A shell utility to automatically build, run, and provide commands for inspecting the test container.
 
 ---
 
@@ -72,8 +74,8 @@ sudo cp idle-shutdown.sh /usr/local/bin/idle-shutdown.sh
 sudo chmod +x /usr/local/bin/idle-shutdown.sh
 
 # Copy Systemd units
-sudo cp idle-shutdown.service /etc/systemd/system/idle-shutdown.service
-sudo cp idle-shutdown.timer /etc/systemd/system/idle-shutdown.timer
+sudo cp units/idle-shutdown.service /etc/systemd/system/idle-shutdown.service
+sudo cp units/idle-shutdown.timer /etc/systemd/system/idle-shutdown.timer
 ```
 
 ### 2. Enable and Start the Timer
@@ -109,10 +111,10 @@ This project includes a Docker-based test harness that boots a full Debian syste
 - User privileges to run docker (or `sudo` access).
 
 ### Run the Test Suite
-Simply run the test runner script:
+Simply run the test runner script from the repository root:
 
 ```bash
-./run-test.sh
+./local/run-test.sh
 ```
 
 This script will:

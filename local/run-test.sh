@@ -6,6 +6,10 @@ set -e
 CONTAINER_NAME="local-systemd-box"
 IMAGE_NAME="shutdown-test-image"
 
+# Resolve absolute paths to ensure the script can be executed from anywhere
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$( dirname "$SCRIPT_DIR" )"
+
 echo "=== 1. Cleaning up previous test instances ==="
 if sudo docker ps -a --format "{{.Names}}" | grep -q "^${CONTAINER_NAME}$"; then
     echo "Found old container. Stopping and removing..."
@@ -14,7 +18,7 @@ if sudo docker ps -a --format "{{.Names}}" | grep -q "^${CONTAINER_NAME}$"; then
 fi
 
 echo -e "\n=== 2. Building the minimal systemd container image ==="
-sudo docker build -t "$IMAGE_NAME" .
+sudo docker build -t "$IMAGE_NAME" -f "$SCRIPT_DIR/Dockerfile" "$REPO_ROOT"
 
 echo -e "\n=== 3. Launching the systemd test box in the background ==="
 sudo docker run -d \
