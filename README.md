@@ -11,17 +11,15 @@ This is highly effective for cost optimization, preventing idle cloud VMs from r
 The system utilizes a lightweight bash script scheduled via a **Systemd Timer** to periodically check system activity. 
 
 ```mermaid
-flowchart TD
-    Start([Timer Triggers Script]) --> CPU{CPU Load < CPU_THRESHOLD?}
-    CPU -- Yes --> Sessions{Active Sessions == 0?}
-    CPU -- No --> Reset[Reset Timer to 0]
-    Sessions -- Yes --> Increment[Increment Timer Counter]
-    Sessions -- No --> Reset
-    Reset --> End([Exit])
+flowchart LR
+    Start([Timer Triggers]) --> Check{System Idle?<br>CPU low & 0 sessions}
+    Check -- Yes --> Increment[Increment Idle Counter]
+    Check -- No --> Reset[Reset Counter to 0]
+    
     Increment --> Limit{Counter >= IDLE_LIMIT?}
-    Limit -- Yes --> Shutdown[!!! Trigger Clean Shutdown !!!]
-    Limit -- No --> End
-    Shutdown --> PowerOff([systemctl poweroff])
+    Limit -- Yes --> Shutdown([Trigger Poweroff])
+    Limit -- No --> End([Exit])
+    Reset --> End
 ```
 
 1. **CPU Monitoring**: Checks the 5-minute CPU load average from `/proc/loadavg`.
