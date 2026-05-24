@@ -23,7 +23,7 @@ flowchart LR
 ```
 
 1. **CPU Monitoring**: Checks the 5-minute CPU load average from `/proc/loadavg`.
-2. **Session Monitoring**: Verifies active interactive shell sessions (`ssh`, `bash`, `sh`, `pts` allocations, or `gcloud` console connections).
+2. **Session Monitoring**: Verifies active interactive shell sessions (`ssh`, `bash`, `sh` or `pts` allocations).
 3. **Threshold Check**: If both CPU usage is below the configured threshold AND no user sessions are active, it increments a persistent idle counter stored in `/run/vm_idle_time`.
 4. **Action**: If the counter reaches the `IDLE_LIMIT`, the system triggers `systemctl poweroff`. If any activity is detected before the limit is reached, the idle counter resets to `0`.
 
