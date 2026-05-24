@@ -2,15 +2,15 @@
 
 # Thresholds
 CPU_THRESHOLD=0.10
-IDLE_LIMIT=600 # 1 minutes in seconds
+IDLE_LIMIT=600 # seconds
 IDLE_FILE="/run/vm_idle_time"
 
-# Get current 1-minute CPU load
+# Get current CPU load
 CPU_LOAD=$(awk '{print $2}' /proc/loadavg)
 
 # This counts any active bash/sh shells, ssh sessions, or pts allocations.
 # We expect at least 1-2 processes to always be active while you are connected.
-ACTIVE_SESSIONS=$(ps aux | grep -v grep | grep -c -E "sshd|pts/|/bin/bash|/bin/sh|gcloud")
+ACTIVE_SESSIONS=$(ps aux | grep -v grep | grep -c -E "sshd|pts/|/bin/bash|/bin/sh")
 
 # Evaluate if system is mathematically idle
 IS_IDLE=$(echo "$CPU_LOAD < $CPU_THRESHOLD" | bc -l)
