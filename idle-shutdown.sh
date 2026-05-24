@@ -35,6 +35,6 @@ if [ "$IS_IDLE" -eq 1 ] && [ "$ACTIVE_SESSIONS" -eq 0 ]; then
     fi
 else
     # Reset the timer because an interactive shell or high CPU load is detected
-    echo "Activity detected! (CPU: $CPU_LOAD, Sessions: $ACTIVE_SESSIONS). Resetting idle timer to 0." # <-- Change this line!
+    echo "Activity detected! (CPU: $CPU_LOAD, Sessions: $ACTIVE_SESSIONS). Resetting idle timer to 0."
     echo 0 > "$IDLE_FILE"
 fi
