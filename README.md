@@ -1,4 +1,4 @@
-# 🧊 VM Idle Shutdown Monitor
+# VM Idle Shutdown Monitor
 
 A lightweight, automated systemd-based daemon to monitor a virtual machine's CPU load and active user sessions, automatically triggering a clean system shutdown when the VM remains idle beyond a configurable threshold. 
 
@@ -6,7 +6,7 @@ This is highly effective for cost optimization, preventing idle cloud VMs from r
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
 The system utilizes a lightweight bash script scheduled via a **Systemd Timer** to periodically check system activity. 
 
@@ -29,7 +29,7 @@ flowchart LR
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 * **`idle-shutdown.sh`**: The core shell script that performs system checks, tracks idle duration, and executes the shutdown command.
 * **`units/`**: Contains the systemd configuration units.
@@ -41,7 +41,7 @@ flowchart LR
 
 ---
 
-## 🛠️ Configuration
+## Configuration
 
 You can customize the thresholds and schedules in two distinct locations:
 
@@ -66,7 +66,7 @@ OnUnitActiveSec=1min  # How often the check runs after that (once per minute)
 
 ---
 
-## 🧮 How the Timing Math Works (& Gotchas)
+## How the Timing Math Works (& Gotchas)
 
 Understanding the relationship between the **Systemd Timer** and the **Bash Script Counter** is crucial to avoid unexpected behavior or extremely delayed shutdowns.
 
@@ -101,7 +101,7 @@ Because the check only runs once every 30 minutes, it takes **10 successful chec
 
 ---
 
-### ✍️ Customizing for Common Use Cases
+### Customizing for Common Use Cases
 
 #### Case 1: You want a 30-minute idle shutdown (with frequent checking)
 If you want the VM to shut down after exactly 30 minutes of continuous idleness:
@@ -115,7 +115,7 @@ If you want the VM to shut down after exactly 60 minutes of continuous idleness:
 
 ---
 
-## 🚀 Production Deployment
+## Production Deployment
 
 To deploy this monitoring system on your VM, follow these steps:
 
@@ -156,7 +156,7 @@ systemctl list-timers --all | grep idle-shutdown
 
 ---
 
-## 🧪 Local Testing & Docker Simulation
+## Local Testing & Docker Simulation
 
 This project includes a Docker-based test harness that boots a full Debian system running systemd, allowing you to safely test the script's behavior and systemd unit bindings without powering down your host machine.
 
@@ -207,6 +207,6 @@ This script will:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](file:///home/aefiguerola/projects/idle-shutdown/LICENSE) file for details.
