@@ -4,6 +4,8 @@ A lightweight, automated systemd-based daemon to monitor a virtual machine's CPU
 
 This is highly effective for cost optimization, preventing idle cloud VMs from running and billing continuously when not in use.
 
+> **Authorship note:** I used AI to help develop significant portions of this repository, including parts of the implementation and documentation. I reviewed, tested, and refined that content before including it here.
+
 ---
 
 ## How It Works
